@@ -28,7 +28,7 @@ RUN chown -R steam:steam /home/steam /ark /arkserver
 
 RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
     usermod -a -G sudo steam && \
-    sudo rm /tmp/dumps && \
+    sudo rm -R /tmp/dumps && \
     touch /home/steam/.sudo_as_admin_successful
 
 WORKDIR /arkserver
