@@ -7,7 +7,7 @@ REPODIR="$(dirname "$SCRIPTDIR")"
 set -eo pipefail
 
 usermod -u $UID steam
-usermod -g $GID steam
+groupmod -g $GID steam
 
 echo "###########################################################################"
 echo "# Ark Server - " `date`
