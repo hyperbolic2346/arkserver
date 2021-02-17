@@ -6,6 +6,9 @@ REPODIR="$(dirname "$SCRIPTDIR")"
 # always fail script if a cmd fails
 set -eo pipefail
 
+usermod -u $UID steam
+usermod -g $GID steam
+
 echo "###########################################################################"
 echo "# Ark Server - " `date`
 echo "###########################################################################"
