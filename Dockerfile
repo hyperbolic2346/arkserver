@@ -10,7 +10,8 @@ RUN dpkg --add-architecture i386 && \
     apt-get install -y ca-certificates steamcmd language-pack-en
 
 RUN ln -s /usr/games/steamcmd /usr/local/bin && \
-    adduser --gecos "" --disabled-password steam
+    adduser --gecos "" --disabled-password steam && \
+    steamcmd +quit
 
 RUN curl -sL https://git.io/arkmanager | bash -s steam && \
     ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
