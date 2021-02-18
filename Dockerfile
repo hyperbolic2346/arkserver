@@ -20,7 +20,6 @@ RUN mkdir /ark && \
     
 COPY arkmanager/arkmanager.cfg /etc/arkmanager/arkmanager.cfg
 COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
-COPY main.sh /arkserver/main.sh
 COPY run.sh /arkserver/run.sh
 COPY log.sh /arkserver/log.sh
 
