@@ -1,3 +1,6 @@
+## Thanks for the patience
+As of 2021-02-18 :latest is stable and will stay that way. Changes will begin in :dev.  Please communicate any issues. Thanks, jkread.
+
 # arkserver
 ```
 Docker image for a dedicated ARK Server with arkmanager.
