@@ -8,6 +8,7 @@ set -eo pipefail
 
 usermod -u $UID steam
 groupmod -g $GID steam
+su steam
 
 echo "###########################################################################"
 echo "# Ark Server - " `date`
