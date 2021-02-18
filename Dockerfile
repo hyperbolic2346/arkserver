@@ -50,4 +50,4 @@ VOLUME /ark
 
 USER root
 
-CMD [ "/arkserver/run.sh" ]
+CMD [ "/arkserver/start.sh" ]
