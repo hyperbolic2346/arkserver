@@ -20,7 +20,7 @@ export PATH=$PATH://etc/arkmanager/://etc/arkmanager/
 
 # Launch run.sh with user steam (-p allow to keep env variables)
 echo "Ensuring correct permissions..."
-chown -R steam:steam /ark /home/steam /etc/arkmanager
+sudo chown -R steam:steam /ark /home/steam /etc/arkmanager
 
 su --preserve-environment steam
 
