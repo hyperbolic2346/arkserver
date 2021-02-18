@@ -31,7 +31,7 @@ RUN sudo rm -R /tmp/dumps && \
     usermod -a -G sudo steam && \
     touch /home/steam/.sudo_as_admin_successful
 
-WORKDIR /arkserver
+WORKDIR /home/steam
 USER steam
 
 ENV am_ark_SessionName="Ark Server" \
