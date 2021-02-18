@@ -10,8 +10,7 @@ RUN dpkg --add-architecture i386 && \
     apt-get install -y ca-certificates steamcmd language-pack-en
 
 RUN ln -s /usr/games/steamcmd /usr/local/bin && \
-    adduser --gecos "" --disabled-password steam && \
-    steamcmd +quit
+    adduser --gecos "" --disabled-password steam
 
 RUN curl -sL https://git.io/arkmanager | bash -s steam && \
     ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
@@ -21,6 +20,7 @@ RUN mkdir /ark && \
     
 COPY arkmanager/arkmanager.cfg /etc/arkmanager/arkmanager.cfg
 COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
+COPY main.sh /arkserver/main.sh
 COPY run.sh /arkserver/run.sh
 COPY log.sh /arkserver/log.sh
 
@@ -45,4 +45,4 @@ ENV am_ark_SessionName="Ark Server" \
 
 VOLUME /ark
 
-CMD [ "./run.sh" ]
+CMD [ "./main.sh" ]
