@@ -55,6 +55,7 @@ if [ ! -d /ark/server ] || [ ! -f /ark/server/ShooterGame/Binaries/Linux/Shooter
 	mkdir -p /ark/server/ShooterGame/Saved/Config/LinuxServer
 	mkdir -p /ark/server/ShooterGame/Content/Mods
 	mkdir -p /ark/server/ShooterGame/Binaries/Linux/
+	arkmanager install
 fi
 
 if [ ! -f /ark/config/crontab ]; then
@@ -117,17 +118,27 @@ else
 	echo "Save file validation is not enabled."
 fi
 
-if [[ $BACKUP_ONSTART = true ]]; then
-	echo "Backing up on start..."
-	arkmanager backup
+if [ ${BACKUPONSTART} -eq 1 ] && [ "$(ls -A server/ShooterGame/Saved/SavedArks/)" ]; then 
+    echo "[Backup on Start]"
+    arkmanager backup
 else
-	echo "Backup on start is not enabled."
+    echo "[No Backup On Start]"
 fi
 
 function stop {
-	arkmanager broadcast "Server is shutting down"
-	arkmanager notify "Server is shutting down"
-	arkmanager stop
+	if [ ${BACKUPONSTOP} -eq 1 ] && [ "$(ls -A server/ShooterGame/Saved/SavedArks)" ]; then
+		echo "[Backup on stop]"
+		arkmanager backup
+	fi
+	if [ ${WARNONSTOP} -eq 1 ];then 
+            arkmanager broadcast "Server is shutting down"
+            arkmanager notify "Server is shutting down"
+	    arkmanager stop --warn
+	else
+            arkmanager broadcast "Server is shutting down"
+            arkmanager notify "Server is shutting down"
+	    arkmanager stop
+	fi
 	exit 0
 }
 
@@ -139,6 +150,12 @@ trap stop TERM
 # to allow server logs to be scraped from RCON to stdout
 # bash -c ./log.sh &
 
-arkmanager start --no-background --verbose &
-arkmanpid=$!
-wait $arkmanpid
+if [ $UPDATEONSTART -eq 0 ]; then
+	arkmanager start -noautoupdate --no-background --verbose &
+        arkmanpid=$!
+        wait $arkmanpid
+else
+        arkmanager start --no-background --verbose &
+        arkmanpid=$!
+        wait $arkmanpid
+fi
