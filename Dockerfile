@@ -12,10 +12,6 @@ RUN dpkg --add-architecture i386 && \
 RUN ln -s /usr/games/steamcmd /usr/local/bin && \
     adduser --gecos "" --disabled-password steam
 
-WORKDIR /home/steam
-USER steam
-RUN steamcmd +quit
-
 RUN curl -sL https://git.io/arkmanager | bash -s steam && \
     ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
 
@@ -36,6 +32,8 @@ RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
 
 WORKDIR /home/steam
 USER steam
+
+RUN steamcmd +quit
 
 ENV am_ark_SessionName="Ark Server" \
     am_serverMap="TheIsland" \
