@@ -20,10 +20,8 @@ RUN mkdir /ark && \
     
 COPY arkmanager/arkmanager.cfg /etc/arkmanager/arkmanager.cfg
 COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
-COPY start.sh /arkserver/start.sh
-COPY run.sh /arkserver/run.sh
+COPY arkserver.sh /arkserver/arkserver.sh
 COPY log.sh /arkserver/log.sh
-COPY cron.sh /arkserver/cron.sh
 
 RUN chown -R steam:steam /home/steam /ark /arkserver && chmod -R 777 /root /arkserver
 
@@ -51,4 +49,4 @@ VOLUME /ark
 
 USER root
 
-CMD [ "/arkserver/start.sh" ]
+CMD [ "/arkserver/arkserver.sh" ]
