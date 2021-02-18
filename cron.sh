@@ -25,7 +25,7 @@ fi
 CRONNUMBER=`grep -v "^#" /ark/config/crontab | wc -l`
 if [ $CRONNUMBER -gt 0 ]; then
 	echo "Starting cron service..."
-	systemctl start cron
+	service cron start
 	
 	echo "Loading crontab..."
 	# We load the crontab file if it exist.
