@@ -12,9 +12,9 @@ RUN dpkg --add-architecture i386 && \
 RUN ln -s /usr/games/steamcmd /usr/local/bin && \
     adduser --gecos "" --disabled-password steam
     
-RUN su steam; \
-    cd /home/steam; \
-    steamcmd +quit
+RUN su steam
+RUN cd /home/steam
+RUN steamcmd +quit
 
 RUN curl -sL https://git.io/arkmanager | bash -s steam && \
     ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
