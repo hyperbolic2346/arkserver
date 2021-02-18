@@ -47,6 +47,4 @@ ENV am_ark_SessionName="Ark Server" \
 
 VOLUME /ark
 
-USER root
-
 CMD [ "/arkserver/arkserver.sh" ]
