@@ -6,17 +6,26 @@ REPODIR="$(dirname "$SCRIPTDIR")"
 # always fail script if a cmd fails
 set -eo pipefail
 
-# sudo usermod -u $UID steam
-# sudo groupmod -g $GID steam
-# su steam
-
 echo "###########################################################################"
 echo "# Ark Server - " `date`
 echo "###########################################################################"
 
+# Change the UID if needed
+[ ! "$(id -u steam)" -eq "$UID" ] && echo "Changing steam uid to $UID." && usermod -o -u "$UID" steam ;
+# Change gid if needed
+[ ! "$(id -g steam)" -eq "$GID" ] && echo "Changing steam gid to $GID." && groupmod -o -g "$GID" steam ;
+
+# Add Ark Server Tools to Path
+export PATH=$PATH://etc/arkmanager/://etc/arkmanager/
+
+# avoid error message when su -p (we need to read the /root/.bash_rc )
+chmod -R 777 /root/
+
+# Launch run.sh with user steam (-p allow to keep env variables)
 echo "Ensuring correct permissions..."
-sudo find /ark \( -not -user steam -o -not -group steam \) -exec chown -v steam:steam {} \; 
-sudo find /home/steam \( -not -user steam -o -not -group steam \) -exec chown -v steam:steam {} \;
+chown -R steam:steam /ark /home/steam /etc/arkmanager
+
+su --preserve-environment steam
 
 # Remove arkmanager tracking files if they exist
 # They can cause issues with starting the server multiple times
