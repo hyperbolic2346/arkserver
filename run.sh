@@ -69,18 +69,27 @@ else
 	echo "Save file validation is not enabled."
 fi
 
-if [[ $BACKUP_ONSTART = true ]]; then
-	echo "Backing up on start..."
-	arkmanager backup
+if [ ${BACKUPONSTART} -eq 1 ] && [ "$(ls -A server/ShooterGame/Saved/SavedArks/)" ]; then 
+    echo "[Backup on Start]"
+    arkmanager backup
 else
-	echo "Backup on start is not enabled."
+    echo "[No Backup On Start]"
 fi
 
-
 function stop {
-	arkmanager broadcast "Server is shutting down"
-	arkmanager notify "Server is shutting down"
-	arkmanager stop
+	if [ ${BACKUPONSTOP} -eq 1 ] && [ "$(ls -A server/ShooterGame/Saved/SavedArks)" ]; then
+		echo "[Backup on stop]"
+		arkmanager backup
+	fi
+	if [ ${WARNONSTOP} -eq 1 ];then 
+            arkmanager broadcast "Server is shutting down"
+            arkmanager notify "Server is shutting down"
+	    arkmanager stop --warn
+	else
+            arkmanager broadcast "Server is shutting down"
+            arkmanager notify "Server is shutting down"
+	    arkmanager stop
+	fi
 	exit 0
 }
 
