@@ -44,4 +44,4 @@ ENV am_ark_SessionName="Ark Server" \
 
 VOLUME /ark
 
-CMD [ "./main.sh" ]
+CMD [ "/arkserver/main.sh" ]
