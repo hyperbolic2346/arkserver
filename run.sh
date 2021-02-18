@@ -6,24 +6,6 @@ REPODIR="$(dirname "$SCRIPTDIR")"
 # always fail script if a cmd fails
 set -eo pipefail
 
-echo "###########################################################################"
-echo "# Ark Server - " `date`
-echo "###########################################################################"
-
-# Change the UID if needed
-[ ! "$(id -u steam)" -eq "$UID" ] && echo "Changing steam uid to $UID." && usermod -o -u "$UID" steam ;
-# Change gid if needed
-[ ! "$(id -g steam)" -eq "$GID" ] && echo "Changing steam gid to $GID." && groupmod -o -g "$GID" steam ;
-
-# Add Ark Server Tools to Path
-export PATH=$PATH://etc/arkmanager/://etc/arkmanager/
-
-# Launch run.sh with user steam (-p allow to keep env variables)
-echo "Ensuring correct permissions..."
-sudo chown -R steam:steam /ark /home/steam /etc/arkmanager
-
-su --preserve-environment steam
-
 # Remove arkmanager tracking files if they exist
 # They can cause issues with starting the server multiple times
 # due to the restart command not completing when the container exits
