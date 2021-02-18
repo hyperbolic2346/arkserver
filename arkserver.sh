@@ -55,7 +55,7 @@ if [ ! -d /ark/server ] || [ ! -f /ark/server/ShooterGame/Binaries/Linux/Shooter
 	mkdir -p /ark/server/ShooterGame/Saved/Config/LinuxServer
 	mkdir -p /ark/server/ShooterGame/Content/Mods
 	mkdir -p /ark/server/ShooterGame/Binaries/Linux/
-	arkmanager install
+	arkmanager install --spinner
 fi
 
 if [ ! -f /ark/config/crontab ]; then
