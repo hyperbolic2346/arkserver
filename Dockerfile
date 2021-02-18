@@ -23,6 +23,7 @@ COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
 COPY start.sh /arkserver/start.sh
 COPY run.sh /arkserver/run.sh
 COPY log.sh /arkserver/log.sh
+COPY cron.sh /arkserver/cron.sh
 
 RUN chown -R steam:steam /home/steam /ark /arkserver && chmod -R 777 /root /arkserver
 
