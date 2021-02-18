@@ -20,6 +20,7 @@ RUN mkdir /ark && \
     
 COPY arkmanager/arkmanager.cfg /etc/arkmanager/arkmanager.cfg
 COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
+COPY start.sh /arkserver/start.sh
 COPY run.sh /arkserver/run.sh
 COPY log.sh /arkserver/log.sh
 
@@ -46,5 +47,7 @@ ENV am_ark_SessionName="Ark Server" \
     GID=1000
 
 VOLUME /ark
+
+USER root
 
 CMD [ "/arkserver/run.sh" ]
