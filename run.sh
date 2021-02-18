@@ -6,8 +6,8 @@ REPODIR="$(dirname "$SCRIPTDIR")"
 # always fail script if a cmd fails
 set -eo pipefail
 
-usermod -u $UID steam
-groupmod -g $GID steam
+sudo usermod -u $UID steam
+sudo groupmod -g $GID steam
 su steam
 
 echo "###########################################################################"
