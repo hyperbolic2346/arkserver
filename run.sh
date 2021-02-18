@@ -18,9 +18,6 @@ echo "##########################################################################
 # Add Ark Server Tools to Path
 export PATH=$PATH://etc/arkmanager/://etc/arkmanager/
 
-# avoid error message when su -p (we need to read the /root/.bash_rc )
-chmod -R 777 /root/
-
 # Launch run.sh with user steam (-p allow to keep env variables)
 echo "Ensuring correct permissions..."
 chown -R steam:steam /ark /home/steam /etc/arkmanager
