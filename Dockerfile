@@ -47,7 +47,7 @@ ENV am_ark_SessionName="Ark Server" \
     VALIDATE_SAVE_EXISTS=false \
     BACKUP_ONSTART=false \
     LOG_RCONCHAT=0 \
-    ARKCLUSTER=false
+    ARKCLUSTER=false \
     UID=1000 \
     GID=1000
 
