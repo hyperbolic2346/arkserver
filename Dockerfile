@@ -32,14 +32,20 @@ RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/$AMG
 ARG AMG_BUILD
 FROM arkmanager-$AMG_BUILD
 RUN ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
+=======
+FROM ubuntu:xenial
 
-COPY arkmanager/arkmanager.cfg /etc/arkmanager/arkmanager.cfg
-COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
-COPY run.sh /home/steam/run.sh
-COPY log.sh /home/steam/log.sh
+USER root
 
 RUN mkdir /ark && \
-    chown -R steam:steam /home/steam/ /ark
+    mkdir /arkserver
+    
+COPY arkmanager/arkmanager.cfg /etc/arkmanager/arkmanager.cfg
+COPY arkmanager/instance.cfg /etc/arkmanager/instances/main.cfg
+COPY arkserver.sh /arkserver/arkserver.sh
+COPY log.sh /arkserver/log.sh
+
+RUN chown -R steam:steam /home/steam /ark /arkserver && chmod -R 777 /root /arkserver
 
 RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
     usermod -a -G sudo steam && \
@@ -48,9 +54,11 @@ RUN echo "%sudo   ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers && \
 WORKDIR /home/steam
 USER steam
 
-ENV am_ark_SessionName=Ark\ Server \
-    am_serverMap=TheIsland \
-    am_ark_ServerAdminPassword=k3yb04rdc4t \
+RUN steamcmd +quit
+
+ENV am_ark_SessionName="Ark Server" \
+    am_serverMap="TheIsland" \
+    am_ark_ServerAdminPassword="k3yb04rdc4t" \
     am_ark_MaxPlayers=70 \
     am_ark_QueryPort=27015 \
     am_ark_Port=7778 \
@@ -63,6 +71,8 @@ ENV VALIDATE_SAVE_EXISTS=false \
     BACKUP_ONSTART=false \
     LOG_RCONCHAT=0 \
     ARKCLUSTER=false
+    UID=1000 \
+    GID=1000
 
 # only mount the steamapps directory
 VOLUME /home/steam/.steam/steamapps
@@ -72,4 +82,4 @@ VOLUME /arkserver
 # mount /arkserver/ShooterGame/Saved seperate for each server
 # mount /arkserver/ShooterGame/Saved/clusters shared for all servers
 
-CMD [ "./run.sh" ]
+CMD [ "/arkserver/arkserver.sh" ]

@@ -11,9 +11,17 @@ echo "##########################################################################
 echo "# Ark Server - " `date`
 echo "###########################################################################"
 
+# Change the UID if needed
+[ ! "$(id -u steam)" -eq "$UID" ] && echo "Changing steam uid to $UID." && sudo usermod -o -u "$UID" steam ;
+# Change gid if needed
+[ ! "$(id -g steam)" -eq "$GID" ] && echo "Changing steam gid to $GID." && sudo groupmod -o -g "$GID" steam ;
+
+# Put steam owner of directories (if the uid changed, then it's needed)
 echo "Ensuring correct permissions..."
-sudo find /ark -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
-sudo find /home/steam -not -user steam -o -not -group steam -exec chown -v steam:steam {} \;
+sudo chown -R steam:steam /ark /home/steam /etc/arkmanager /arkserver
+
+# avoid error message when su -p (we need to read the /root/.bash_rc )
+sudo chmod -R 777 /root /arkserver
 
 if [ -n "$ARKSERVER_SHARED" ]; then
   # directory is created when something is mounted to 'Saved'
@@ -89,16 +97,13 @@ if [ ! -f /ark/config/crontab ]; then
 # |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
 # |  |  |  |  |
 # *  *  *  *  * user-name  command to be executed
-
 # Examples for Ark:
 # 0 * * * * arkmanager update				# update every hour
 # */15 * * * * arkmanager backup			# backup every 15min
 # 0 0 * * * arkmanager backup				# backup every day at midnight
-
 */30 * * * * arkmanager update --update-mods --warn --saveworld
 10 */8 * * * arkmanager saveworld && arkmanager backup
 15 10 * * * arkmanager restart --warn --saveworld
-
 EOF
 fi
 
@@ -107,7 +112,7 @@ CRONNUMBER=`grep -v "^#" /ark/config/crontab | wc -l`
 if [ $CRONNUMBER -gt 0 ]; then
 	echo "Starting cron service..."
 	sudo service cron start
-
+	
 	echo "Loading crontab..."
 	# We load the crontab file if it exist.
 	crontab /ark/config/crontab
@@ -141,17 +146,27 @@ else
 	echo "Save file validation is not enabled."
 fi
 
-if [ "$BACKUP_ONSTART" = "true" ]; then
-	echo "Backing up on start..."
-	arkmanager backup
+if [ ${BACKUPONSTART} -eq 1 ] && [ "$(ls -A server/ShooterGame/Saved/SavedArks/)" ]; then 
+    echo "[Backup on Start]"
+    arkmanager backup
 else
-	echo "Backup on start is not enabled."
+    echo "[No Backup On Start]"
 fi
 
 function stop {
-	arkmanager broadcast "Server is shutting down"
-	arkmanager notify "Server is shutting down"
-	arkmanager stop
+	if [ ${BACKUPONSTOP} -eq 1 ] && [ "$(ls -A server/ShooterGame/Saved/SavedArks)" ]; then
+		echo "[Backup on stop]"
+		arkmanager backup
+	fi
+	if [ ${WARNONSTOP} -eq 1 ];then 
+            arkmanager broadcast "Server is shutting down"
+            arkmanager notify "Server is shutting down"
+	    arkmanager stop --warn
+	else
+            arkmanager broadcast "Server is shutting down"
+            arkmanager notify "Server is shutting down"
+	    arkmanager stop
+	fi
 	exit 0
 }
 
@@ -179,6 +194,12 @@ if [ "$LIST_MOUNTS" = "true" ]; then
   exit 0
 fi
 
-arkmanager start --no-background --verbose &
-arkmanpid=$!
-wait $arkmanpid
+if [ $UPDATEONSTART -eq 0 ]; then
+	arkmanager start -noautoupdate --no-background --verbose &
+        arkmanpid=$!
+        wait $arkmanpid
+else
+        arkmanager start --no-background --verbose &
+        arkmanpid=$!
+        wait $arkmanpid
+fi
