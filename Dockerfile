@@ -1,41 +1,19 @@
-ARG STEAMCMD_VERSION=latest
-ARG AMG_BUILD=latest
-ARG AMG_VERSION=v1.6.57
-FROM drpsychick/steamcmd:$STEAMCMD_VERSION AS base
-
-USER root
-
-RUN apt-get update \
-    && apt-get install -y \
-    curl \
-    cron \
-    bzip2 \
-    perl-modules \
-    lsof \
-    libc6-i386 \
-    lib32gcc1 \
-    libsdl2-2.0.0:i386 \
-    sudo \
-    && apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /tmp/* \
-    && rm -rf /var/tmp/*
-
-FROM base AS arkmanager-latest
-RUN curl -sL "https://git.io/arkmanager" | bash -s steam
-
-FROM base AS arkmanager-versioned
-ARG AMG_VERSION
-RUN curl -sL "https://raw.githubusercontent.com/arkmanager/ark-server-tools/$AMG_VERSION/netinstall.sh" | bash -s steam
-
-ARG AMG_BUILD
-FROM arkmanager-$AMG_BUILD
-RUN ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
-=======
 FROM ubuntu:xenial
 
 USER root
+
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y curl cron bzip2 perl-modules lsof libc6-i386 lib32gcc1 sudo tzdata && \
+    echo steam steam/question select "I AGREE" | debconf-set-selections && \
+    echo steam steam/license note '' | debconf-set-selections && \
+    apt-get install -y ca-certificates steamcmd language-pack-en
+
+RUN ln -s /usr/games/steamcmd /usr/local/bin && \
+    adduser --gecos "" --disabled-password steam
+
+RUN curl -sL https://git.io/arkmanager | bash -s steam && \
+    ln -s /usr/local/bin/arkmanager /usr/bin/arkmanager
 
 RUN mkdir /ark && \
     mkdir /arkserver
@@ -65,9 +43,8 @@ ENV am_ark_SessionName="Ark Server" \
     am_ark_RCONPort=32330 \
     am_ark_AltSaveDirectoryName=SavedArks \
     am_arkwarnminutes=15 \
-    am_arkAutoUpdateOnStart=false
-
-ENV VALIDATE_SAVE_EXISTS=false \
+    am_arkAutoUpdateOnStart=false \
+    VALIDATE_SAVE_EXISTS=false \
     BACKUP_ONSTART=false \
     LOG_RCONCHAT=0 \
     ARKCLUSTER=false
